@@ -17,6 +17,23 @@ The system is intentionally simple and demonstrates core distributed-system conc
 
 All state is stored in memory and reset when the server restarts.
 
+```mermaid
+sequenceDiagram
+    participant O as Operator
+    participant S as Orchestration server
+    participant A as Agent
+    A->>S: POST /agents/register
+    loop periodically
+        A->>S: POST /agents/heartbeat
+    end
+    O->>S: POST /tasks (pending)
+    O->>S: POST /tasks/assign (online agents only → running)
+    A->>S: POST /reports (completed / failed)
+    Note over S: no heartbeat for 15s → agent marked offline
+```
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the design trade-offs.
+
 ---
 
 ## Running the server
